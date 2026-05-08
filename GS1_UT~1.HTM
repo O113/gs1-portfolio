@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GS1 Academy – Utbildningsportal</title>
+<style>
+:root {
+  --blue: #003DA5;
+  --blue-dark: #002880;
+  --blue-light: #E8EFFE;
+  --blue-mid: #1A56C4;
+  --red: #E4002B;
+  --g50:  #F9FAFB;
+  --g100: #F3F4F6;
+  --g200: #E5E7EB;
+  --g300: #D1D5DB;
+  --g500: #6B7280;
+  --g700: #374151;
+  --g900: #111827;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --amber: #D97706;
+  --amber-bg: #FFFBEB;
+  --purple: #7C3AED;
+  --purple-bg: #F5F3FF;
+  --teal: #0D9488;
+  --teal-bg: #F0FDFA;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--g100); color: var(--g900); min-height: 100vh; }
+
+/* Header */
+.hdr { background: var(--blue); color: #fff; height: 64px; display: flex; align-items: center; padding: 0 32px; gap: 24px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 16px rgba(0,0,0,.2); }
+.logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 17px; letter-spacing: -.3px; flex-shrink: 0; }
+.logo-badge { background: #fff; color: var(--blue); padding: 4px 12px; border-radius: 5px; font-weight: 900; font-size: 15px; }
+.search-wrap { flex: 1; max-width: 480px; position: relative; }
+.search-wrap input { width: 100%; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 9px 14px 9px 38px; color: #fff; font-size: 14px; outline: none; transition: background .2s; font-family: inherit; }
+.search-wrap input::placeholder { color: rgba(255,255,255,.6); }
+.search-wrap input:focus { background: rgba(255,255,255,.22); border-color: rgba(255,255,255,.5); }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: .7; font-size: 14px; }
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.user-avatar { width: 36px; height: 36px; background: rgba(255,255,255,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; cursor: pointer; border: 2px solid rgba(255,255,255,.4); }
+.notif { position: relative; cursor: pointer; opacity: .85; }
+.notif-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--blue); }
+
+/* Layout */
+.layout { display: flex; min-height: calc(100vh - 64px); }
+
+/* Sidebar */
+.sidebar { width: 260px; background: #fff; border-right: 1px solid var(--g200); padding: 24px 0; flex-shrink: 0; position: sticky; top: 64px; height: calc(100vh - 64px); overflow-y: auto; }
+.sidebar-section { margin-bottom: 8px; }
+.sidebar-label { padding: 6px 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--g500); }
+.filter-group { padding: 0 14px; margin-bottom: 16px; }
+.filter-group-title { font-size: 12px; font-weight: 700; color: var(--g700); padding: 8px 6px 6px; }
+.filter-opt { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px; border-radius: 7px; cursor: pointer; font-size: 13px; transition: background .12s; user-select: none; }
+.filter-opt:hover { background: var(--g100); }
+.filter-opt.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
+.filter-opt input[type=checkbox] { accent-color: var(--blue); margin-right: 8px; }
+.filter-count { font-size: 11px; background: var(--g200); color: var(--g500); padding: 1px 7px; border-radius: 10px; }
+.filter-opt.active .filter-count { background: rgba(0,61,165,.15); color: var(--blue); }
+.divider { height: 1px; background: var(--g200); margin: 8px 20px 16px; }
+.progress-sidebar { padding: 0 20px 20px; }
+.progress-sidebar h4 { font-size: 12px; font-weight: 700; color: var(--g700); margin-bottom: 12px; }
+.stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.stat { text-align: center; }
+.stat .val { font-size: 22px; font-weight: 800; color: var(--blue); line-height: 1; }
+.stat .lbl { font-size: 10px; color: var(--g500); margin-top: 2px; }
+.mini-prog { margin-top: 12px; }
+.mini-prog-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--g500); margin-bottom: 4px; }
+.mini-prog-bar { height: 6px; background: var(--g200); border-radius: 3px; overflow: hidden; }
+.mini-prog-fill { height: 100%; background: var(--blue); border-radius: 3px; }
+
+/* Main content */
+.main { flex: 1; padding: 32px; overflow: hidden; }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 100%); border-radius: 16px; padding: 32px 36px; color: #fff; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; }
+.hero-left h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.hero-left p { font-size: 14px; opacity: .85; line-height: 1.55; max-width: 420px; }
+.hero-stats { display: flex; gap: 28px; flex-shrink: 0; }
+.hero-stat { text-align: center; background: rgba(255,255,255,.12); border-radius: 12px; padding: 16px 22px; }
+.hero-stat .n { font-size: 28px; font-weight: 900; line-height: 1; }
+.hero-stat .l { font-size: 11px; opacity: .75; margin-top: 4px; }
+
+/* Section header */
+.sec-hd { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+.sec-hd h2 { font-size: 17px; font-weight: 800; }
+.sec-hd a { font-size: 13px; color: var(--blue); cursor: pointer; text-decoration: none; }
+.sec-hd a:hover { text-decoration: underline; }
+
+/* In-progress courses */
+.progress-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 36px; }
+.prog-card { background: #fff; border-radius: 14px; border: 1px solid var(--g200); padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.05); transition: box-shadow .15s; cursor: pointer; }
+.prog-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+.prog-card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+.prog-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.prog-info h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; }
+.prog-info p { font-size: 12px; color: var(--g500); }
+.prog-bottom { display: flex; align-items: center; gap: 12px; }
+.prog-track { flex: 1; height: 6px; background: var(--g200); border-radius: 3px; overflow: hidden; }
+.prog-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+.prog-pct { font-size: 12px; font-weight: 700; color: var(--blue); width: 32px; text-align: right; }
+.prog-continue { padding: 7px 14px; background: var(--blue); color: #fff; border: none; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+.prog-continue:hover { background: var(--blue-dark); }
+
+/* Filter chips */
+.filter-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.fc { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--g300); background: #fff; font-size: 12px; font-weight: 600; color: var(--g700); cursor: pointer; transition: all .13s; }
+.fc:hover { border-color: var(--blue); color: var(--blue); }
+.fc.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* Course grid */
+.course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.course-card { background: #fff; border-radius: 14px; border: 1px solid var(--g200); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.05); transition: box-shadow .15s, transform .15s; cursor: pointer; display: flex; flex-direction: column; }
+.course-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.11); transform: translateY(-2px); }
+.cc-banner { height: 6px; }
+.cc-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+.cc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.cc-icon { font-size: 28px; }
+.cc-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
+.badge-video  { background: var(--purple-bg); color: var(--purple); }
+.badge-inter  { background: var(--blue-light); color: var(--blue); }
+.badge-live   { background: var(--amber-bg); color: var(--amber); }
+.badge-doc    { background: var(--teal-bg); color: var(--teal); }
+.badge-done   { background: var(--green-bg); color: var(--green); }
+.badge-new    { background: #FFF1F2; color: var(--red); }
+.cc-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; line-height: 1.35; }
+.cc-desc { font-size: 13px; color: var(--g500); line-height: 1.55; flex: 1; margin-bottom: 16px; }
+.cc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.meta-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 10px; font-size: 11px; background: var(--g100); color: var(--g700); }
+.cc-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--g200); }
+.dur { font-size: 12px; color: var(--g500); display: flex; align-items: center; gap: 4px; }
+.cc-btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; font-family: inherit; transition: all .13s; }
+.cc-btn-start { background: var(--blue); color: #fff; }
+.cc-btn-start:hover { background: var(--blue-dark); }
+.cc-btn-cont { background: var(--blue-light); color: var(--blue); }
+.cc-btn-cont:hover { background: #d4e2f8; }
+.cc-btn-done { background: var(--green-bg); color: var(--green); cursor: default; }
+.no-results { text-align: center; padding: 60px 20px; color: var(--g500); }
+.no-results .icon { font-size: 40px; margin-bottom: 12px; }
+.no-results p { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-badge">GS1</div>
+    <span>Academy</span>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Sök kurs, ämne eller bransch..." oninput="applyFilters()">
+  </div>
+  <div class="hdr-right">
+    <div class="notif" title="Notifieringar">🔔<div class="notif-dot"></div></div>
+    <div class="user-avatar" title="Maria Lindqvist">ML</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Min progress</div>
+      <div class="progress-sidebar">
+        <div class="stat-row">
+          <div class="stat"><div class="val">3</div><div class="lbl">Påbörjad</div></div>
+          <div class="stat"><div class="val">2</div><div class="lbl">Avklarad</div></div>
+          <div class="stat"><div class="val">0</div><div class="lbl">Intyg</div></div>
+        </div>
+        <div class="mini-prog">
+          <div class="mini-prog-label"><span>Introduktionsspår</span><span>40%</span></div>
+          <div class="mini-prog-bar"><div class="mini-prog-fill" style="width:40%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Filtrera</div>
+      <div class="filter-group">
+        <div class="filter-group-title">Bransch</div>
+        <label class="filter-opt active" onclick="toggleFilter('branch','all',this)">
+          <span><input type="checkbox" checked> Alla branscher</span>
+          <span class="filter-count" id="fc-all">12</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('branch','Dagligvaror',this)">
+          <span><input type="checkbox"> Dagligvaror</span>
+          <span class="filter-count">4</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('branch','Apotek',this)">
+          <span><input type="checkbox"> Apotek &amp; sjukvård</span>
+          <span class="filter-count">2</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('branch','Bygg',this)">
+          <span><input type="checkbox"> Bygg &amp; handel</span>
+          <span class="filter-count">1</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('branch','Logistik',this)">
+          <span><input type="checkbox"> Logistik</span>
+          <span class="filter-count">2</span>
+        </label>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Format</div>
+        <label class="filter-opt" onclick="toggleFilter('format','Interaktiv',this)">
+          <span><input type="checkbox"> 🖥 Interaktiv kurs</span>
+          <span class="filter-count">6</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('format','Video',this)">
+          <span><input type="checkbox"> 🎬 Video</span>
+          <span class="filter-count">4</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('format','Live',this)">
+          <span><input type="checkbox"> 📡 Live webinar</span>
+          <span class="filter-count">2</span>
+        </label>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Nivå</div>
+        <label class="filter-opt" onclick="toggleFilter('level','Nybörjare',this)">
+          <span><input type="checkbox"> 🟢 Nybörjare</span>
+          <span class="filter-count">4</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('level','Medel',this)">
+          <span><input type="checkbox"> 🟡 Medel</span>
+          <span class="filter-count">5</span>
+        </label>
+        <label class="filter-opt" onclick="toggleFilter('level','Avancerad',this)">
+          <span><input type="checkbox"> 🔴 Avancerad</span>
+          <span class="filter-count">3</span>
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-left">
+        <h1>Välkommen tillbaka, Maria 👋</h1>
+        <p>Du har 3 pågående kurser. Fortsätt där du slutade — du är på god väg mot ditt introduktionsintyg för dagligvaror.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="n">15 min</div><div class="l">Studerat denna vecka</div></div>
+        <div class="hero-stat"><div class="n">2</div><div class="l">Avklarade kurser</div></div>
+      </div>
+    </div>
+
+    <!-- In progress -->
+    <div class="sec-hd"><h2>Fortsätt där du slutade</h2><a onclick="">Visa alla →</a></div>
+    <div class="progress-cards">
+      <div class="prog-card">
+        <div class="prog-card-top">
+          <div class="prog-icon" style="background:#E8EFFE">📦</div>
+          <div class="prog-info">
+            <h4>Introduktion till GS1-standarder</h4>
+            <p>Grundkurs · Interaktiv · 15 min</p>
+          </div>
+        </div>
+        <div class="prog-bottom">
+          <div class="prog-track"><div class="prog-bar-fill" style="width:60%;background:var(--blue)"></div></div>
+          <div class="prog-pct">60%</div>
+          <button class="prog-continue">Fortsätt</button>
+        </div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-card-top">
+          <div class="prog-icon" style="background:#ECFDF5">🛒</div>
+          <div class="prog-info">
+            <h4>GS1 för dagligvaror</h4>
+            <p>Branschkurs · Video · 40 min</p>
+          </div>
+        </div>
+        <div class="prog-bottom">
+          <div class="prog-track"><div class="prog-bar-fill" style="width:25%;background:var(--green)"></div></div>
+          <div class="prog-pct" style="color:var(--green)">25%</div>
+          <button class="prog-continue">Fortsätt</button>
+        </div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-card-top">
+          <div class="prog-icon" style="background:#FFFBEB">✅</div>
+          <div class="prog-info">
+            <h4>Kom igång med Validoo</h4>
+            <p>Praktisk guide · Video · 18 min</p>
+          </div>
+        </div>
+        <div class="prog-bottom">
+          <div class="prog-track"><div class="prog-bar-fill" style="width:80%;background:var(--amber)"></div></div>
+          <div class="prog-pct" style="color:var(--amber)">80%</div>
+          <button class="prog-continue">Fortsätt</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catalog -->
+    <div class="sec-hd">
+      <h2>Kursbibliotek <span id="result-count" style="font-size:14px;font-weight:400;color:var(--g500)"></span></h2>
+    </div>
+
+    <div class="filter-chips">
+      <div class="fc on" id="fc-alla" onclick="quickFilter('alla',this)">Alla</div>
+      <div class="fc" id="fc-dagligvaror" onclick="quickFilter('Dagligvaror',this)">🛒 Dagligvaror</div>
+      <div class="fc" id="fc-apotek" onclick="quickFilter('Apotek',this)">💊 Apotek</div>
+      <div class="fc" id="fc-bygg" onclick="quickFilter('Bygg',this)">🏗 Bygg</div>
+      <div class="fc" id="fc-logistik" onclick="quickFilter('Logistik',this)">🚛 Logistik</div>
+    </div>
+
+    <div class="course-grid" id="course-grid"></div>
+    <div class="no-results" id="no-results" style="display:none">
+      <div class="icon">🔍</div>
+      <p>Inga kurser matchar din sökning. Prova ett annat sökord eller rensa filtren.</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const COURSES = [
+  { id:1, icon:'📦', title:'Introduktion till GS1-standarder', desc:'Grunderna i GS1-systemet — vad det är, varför det finns och hur du kommer igång. Passar alla nya användare oavsett bransch.', branch:'Alla branscher', format:'Interaktiv', level:'Nybörjare', dur:'15 min', progress:60, banner:'#003DA5', isNew:false },
+  { id:2, icon:'🔢', title:'EAN & GTIN: Fördjupning', desc:'Djupdyk i hur globala artikelnummer är uppbyggda, hur kontrollsiffran beräknas och vilka GTIN-typer som finns (GTIN-8, GTIN-12, GTIN-13, GTIN-14).', branch:'Alla branscher', format:'Video', level:'Nybörjare', dur:'22 min', progress:0, banner:'#1A56C4', isNew:false },
+  { id:3, icon:'🛒', title:'GS1 för dagligvaror', desc:'Hur GS1-standarderna tillämpas i dagligvarubranschen — från streckkod i kassan till elektroniska ordermeddelanden och produktdatadelning.', branch:'Dagligvaror', format:'Video', level:'Medel', dur:'40 min', progress:25, banner:'#059669', isNew:false },
+  { id:4, icon:'🔄', title:'Produktdata och GDSN', desc:'Lär dig hur Global Data Synchronisation Network (GDSN) fungerar och hur du registrerar och delar korrekt produktdata med handelspartners via Validoo.', branch:'Dagligvaror', format:'Interaktiv', level:'Medel', dur:'35 min', progress:0, banner:'#0D9488', isNew:true },
+  { id:5, icon:'💊', title:'GS1 inom sjukvård och apotek', desc:'Patienttrygghet och spårbarhet inom sjukvård — hur GS1-standarderna används för att säkerställa rätt läkemedel till rätt patient vid rätt tillfälle.', branch:'Apotek', format:'Video', level:'Medel', dur:'35 min', progress:0, banner:'#7C3AED', isNew:false },
+  { id:6, icon:'🌱', title:'Spårbarhet i livsmedelskedjan', desc:'EU:s spårbarhetskrav och hur GS1-standarderna hjälper dagligvaruföretag att snabbt identifiera och hantera produktåterkallningar.', branch:'Dagligvaror', format:'Interaktiv', level:'Avancerad', dur:'55 min', progress:0, banner:'#D97706', isNew:false },
+  { id:7, icon:'🏗', title:'GS1 för bygg och industri', desc:'Identifiering av byggprodukter, komponenter och tillgångar med GS1-standarder. Praktiska exempel från leverantör till byggarbetsplats.', branch:'Bygg', format:'Video', level:'Nybörjare', dur:'28 min', progress:100, banner:'#374151', isNew:false },
+  { id:8, icon:'🚛', title:'Logistik och transportetiketter', desc:'GS1-128 transportetiketter och hur de används för att spåra pallar och leveranser effektivt genom hela logistikkedjan.', branch:'Logistik', format:'Interaktiv', level:'Medel', dur:'45 min', progress:0, banner:'#1A56C4', isNew:false },
+  { id:9, icon:'📡', title:'RFID och framtidens spårning', desc:'Hur RFID-teknik kompletterar streckkoder och möjliggör realtidsspårning av varor — med praktiska exempel från butik och lager.', branch:'Alla branscher', format:'Live', level:'Avancerad', dur:'75 min', progress:0, banner:'#7C3AED', isNew:true },
+  { id:10, icon:'🔗', title:'GS1 Digital Link och QR-koder', desc:'Nästa generation av produktmärkning — hur QR-koder baserade på GS1 Digital Link ersätter och kompletterar traditionella streckkoder.', branch:'Alla branscher', format:'Interaktiv', level:'Avancerad', dur:'50 min', progress:0, banner:'#003DA5', isNew:true },
+  { id:11, icon:'✅', title:'Kom igång med Validoo', desc:'Steg-för-steg guide till hur du registrerar och håller produktdata aktuell i Validoo — Sveriges nationella produktdataregister för dagligvaror.', branch:'Dagligvaror', format:'Video', level:'Nybörjare', dur:'18 min', progress:80, banner:'#059669', isNew:false },
+  { id:12, icon:'💉', title:'UDI och medicintekniska produkter', desc:'EU:s förordning om medicintekniska produkter (MDR) och kravet på unik enhetsbeteckning (UDI) — hur GS1 hjälper tillverkare att uppfylla kraven.', branch:'Apotek', format:'Live', level:'Avancerad', dur:'90 min', progress:0, banner:'#7C3AED', isNew:false },
+];
+
+const formatBadge = { 'Interaktiv': 'badge-inter', 'Video': 'badge-video', 'Live': 'badge-live' };
+const formatIcon  = { 'Interaktiv': '🖥', 'Video': '🎬', 'Live': '📡' };
+const levelEmoji  = { 'Nybörjare': '🟢', 'Medel': '🟡', 'Avancerad': '🔴' };
+
+let activeQuickFilter = 'alla';
+let sidebarBranch = 'all', sidebarFormat = '', sidebarLevel = '';
+
+function renderCourses(list) {
+  const grid = document.getElementById('course-grid');
+  const noR = document.getElementById('no-results');
+  document.getElementById('result-count').textContent = `(${list.length})`;
+  if (!list.length) { grid.innerHTML = ''; noR.style.display = 'block'; return; }
+  noR.style.display = 'none';
+  grid.innerHTML = list.map(c => {
+    const btnHtml = c.progress === 100
+      ? `<button class="cc-btn cc-btn-done">✓ Avklarad</button>`
+      : c.progress > 0
+        ? `<button class="cc-btn cc-btn-cont">Fortsätt</button>`
+        : `<button class="cc-btn cc-btn-start">Starta kurs</button>`;
+    const newBadge = c.isNew ? `<span class="badge badge-new">NYTT</span>` : '';
+    const doneBadge = c.progress === 100 ? `<span class="badge badge-done">✓ Avklarad</span>` : '';
+    return `
+    <div class="course-card">
+      <div class="cc-banner" style="background:${c.banner}"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon">${c.icon}</div>
+          <div class="cc-badges">
+            ${newBadge}${doneBadge}
+            <span class="badge ${formatBadge[c.format]}">${formatIcon[c.format]} ${c.format}</span>
+          </div>
+        </div>
+        <div class="cc-title">${c.title}</div>
+        <div class="cc-desc">${c.desc}</div>
+        <div class="cc-meta">
+          <span class="meta-chip">🏷 ${c.branch}</span>
+          <span class="meta-chip">${levelEmoji[c.level]} ${c.level}</span>
+        </div>
+        ${c.progress > 0 && c.progress < 100 ? `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--g500);margin-bottom:4px"><span>Framsteg</span><span>${c.progress}%</span></div><div style="height:5px;background:var(--g200);border-radius:3px;overflow:hidden"><div style="height:100%;width:${c.progress}%;background:var(--blue);border-radius:3px"></div></div></div>` : ''}
+        <div class="cc-footer">
+          <div class="dur">⏱ ${c.dur}</div>
+          ${btnHtml}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function applyFilters() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  let list = COURSES.filter(c => {
+    const matchQ = !q || c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q) || c.branch.toLowerCase().includes(q);
+    const matchBranch = activeQuickFilter === 'alla' ? true : (c.branch === activeQuickFilter || c.branch === 'Alla branscher');
+    return matchQ && matchBranch;
+  });
+  renderCourses(list);
+}
+
+function quickFilter(val, el) {
+  activeQuickFilter = val;
+  document.querySelectorAll('.fc').forEach(f => f.classList.remove('on'));
+  el.classList.add('on');
+  applyFilters();
+}
+
+function toggleFilter(type, val, el) {
+  el.classList.toggle('active');
+  applyFilters();
+}
+
+// Initial render
+applyFilters();
+</script>
+</body>
+</html>

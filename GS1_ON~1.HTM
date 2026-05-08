@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GS1 Academy – Introduktion till GS1-standarder</title>
+<style>
+:root {
+  --blue: #003DA5;
+  --blue-dark: #002880;
+  --blue-light: #E8EFFE;
+  --red: #E4002B;
+  --g100: #F7F8FA;
+  --g200: #E9ECF0;
+  --g300: #D0D5DD;
+  --g600: #475467;
+  --g800: #1D2939;
+  --green: #027A48;
+  --green-bg: #ECFDF3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--g100); color: var(--g800); min-height: 100vh; }
+
+/* Header */
+.hdr { background: var(--blue); color: #fff; padding: 0 28px; height: 62px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,.22); }
+.logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px; letter-spacing: -.2px; }
+.logo-badge { background: #fff; color: var(--blue); padding: 4px 11px; border-radius: 5px; font-weight: 900; font-size: 15px; }
+.hdr-right { display: flex; align-items: center; gap: 14px; font-size: 13px; opacity: .9; }
+.prog-bar { width: 130px; height: 6px; background: rgba(255,255,255,.28); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: #fff; border-radius: 3px; transition: width .4s ease; }
+
+/* Layout */
+.layout { display: flex; margin-top: 62px; min-height: calc(100vh - 62px); }
+
+/* Sidebar */
+.sidebar { width: 272px; background: #fff; border-right: 1px solid var(--g200); position: fixed; top: 62px; bottom: 0; overflow-y: auto; padding: 20px 0; }
+.sidebar-hd { padding: 0 20px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--g600); border-bottom: 1px solid var(--g200); margin-bottom: 6px; }
+.ch { display: flex; align-items: center; gap: 12px; padding: 11px 20px; cursor: pointer; transition: background .12s; border-left: 3px solid transparent; }
+.ch:hover { background: var(--g100); }
+.ch.active { background: var(--blue-light); border-left-color: var(--blue); }
+.ch.done .ch-ic { background: var(--green); color: #fff; }
+.ch.done .ch-ic::after { content: '✓'; }
+.ch-ic { width: 28px; height: 28px; border-radius: 50%; background: var(--g200); color: var(--g600); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.ch.active .ch-ic { background: var(--blue); color: #fff; }
+.ch-text { flex: 1; }
+.ch-title { font-size: 13px; font-weight: 600; }
+.ch-sub { font-size: 11px; color: var(--g600); margin-top: 1px; }
+.sidebar-footer { padding: 20px; border-top: 1px solid var(--g200); margin-top: 12px; }
+.sidebar-footer p { font-size: 11px; color: var(--g600); line-height: 1.5; }
+
+/* Main */
+.main { margin-left: 272px; flex: 1; padding: 44px 48px; max-width: 860px; }
+
+/* Screens */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeUp .28s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Typography */
+.screen-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--blue); margin-bottom: 8px; }
+.screen-title { font-size: 30px; font-weight: 800; color: var(--g800); margin-bottom: 10px; line-height: 1.18; }
+.screen-intro { font-size: 16px; color: var(--g600); margin-bottom: 32px; line-height: 1.65; }
+.dur-tag { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--g200); padding: 6px 14px; border-radius: 20px; font-size: 13px; color: var(--g600); margin-bottom: 28px; }
+
+/* Cards */
+.card { background: #fff; border-radius: 14px; border: 1px solid var(--g200); padding: 28px; margin-bottom: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+.card h3 { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card p { font-size: 14px; line-height: 1.72; color: var(--g600); margin-bottom: 12px; }
+.card p:last-child { margin-bottom: 0; }
+.info-box { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: 0 10px 10px 0; padding: 16px 20px; margin: 20px 0; font-size: 14px; color: var(--g800); line-height: 1.65; }
+.info-box strong { color: var(--blue); }
+
+/* Objectives */
+.obj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.obj { display: flex; align-items: flex-start; gap: 10px; background: #fff; padding: 14px; border-radius: 10px; border: 1px solid var(--g200); font-size: 13px; line-height: 1.5; }
+.obj-n { width: 24px; height: 24px; background: var(--blue-light); color: var(--blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+
+/* Concepts grid */
+.cg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 20px 0; }
+.cc { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 20px 16px; text-align: center; }
+.cc-icon { font-size: 30px; margin-bottom: 10px; }
+.cc h4 { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.cc p { font-size: 12px; color: var(--g600); line-height: 1.45; }
+
+/* Barcode demo */
+.bc-demo { display: flex; align-items: center; gap: 28px; padding: 24px; background: #fff; border-radius: 14px; border: 1px solid var(--g200); margin: 22px 0; }
+.bc-info h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.bc-info p { font-size: 13px; color: var(--g600); line-height: 1.6; margin-bottom: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.chip-b { background: var(--blue-light); color: var(--blue); }
+.chip-g { background: var(--green-bg); color: var(--green); }
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 18px; margin: 22px 0; }
+.step { display: flex; gap: 16px; align-items: flex-start; }
+.step-n { width: 34px; height: 34px; background: var(--blue); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.step-c h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.step-c p { font-size: 13px; color: var(--g600); line-height: 1.55; }
+
+/* Quiz */
+.quiz-q { background: #fff; border-radius: 14px; border: 1px solid var(--g200); padding: 26px; margin-bottom: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+.q-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--blue); margin-bottom: 8px; }
+.q-text { font-size: 16px; font-weight: 700; margin-bottom: 18px; line-height: 1.4; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border: 2px solid var(--g200); border-radius: 10px; cursor: pointer; transition: all .14s; font-size: 14px; line-height: 1.45; }
+.opt:hover { border-color: var(--blue); background: var(--blue-light); }
+.opt.sel { border-color: var(--blue); background: var(--blue-light); }
+.opt.ok { border-color: var(--green); background: var(--green-bg); pointer-events: none; }
+.opt.nope { border-color: var(--red); background: #FFF5F5; pointer-events: none; }
+.opt.locked { pointer-events: none; }
+.opt-radio { width: 18px; height: 18px; border: 2px solid var(--g300); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.opt.ok .opt-radio { border-color: var(--green); color: var(--green); }
+.opt.ok .opt-radio::after { content: '✓'; }
+.opt.nope .opt-radio { border-color: var(--red); color: var(--red); }
+.opt.nope .opt-radio::after { content: '✕'; }
+.q-fb { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.55; display: none; }
+.q-fb.ok { background: var(--green-bg); color: var(--green); display: block; }
+.q-fb.nope { background: #FFF5F5; color: var(--red); display: block; }
+
+/* Navigation */
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--g200); }
+.btn { padding: 12px 26px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .14s; font-family: inherit; }
+.btn-pri { background: var(--blue); color: #fff; }
+.btn-pri:hover { background: var(--blue-dark); }
+.btn-sec { background: #fff; color: var(--g800); border: 1px solid var(--g300); }
+.btn-sec:hover { background: var(--g100); }
+
+/* Completion */
+.done-wrap { text-align: center; padding: 60px 40px 40px; }
+.done-badge { width: 120px; height: 120px; background: linear-gradient(135deg, var(--blue), #1055D4); border-radius: 50%; margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; font-size: 50px; box-shadow: 0 10px 40px rgba(0,61,165,.28); }
+.done-score { background: #fff; border: 1px solid var(--g200); border-radius: 16px; padding: 28px 40px; display: inline-block; margin: 20px auto 32px; }
+.done-score .num { font-size: 56px; font-weight: 900; color: var(--blue); line-height: 1; }
+.done-score .lbl { font-size: 13px; color: var(--g600); margin-top: 4px; }
+.cert { display: inline-block; border: 2px dashed var(--blue); border-radius: 12px; padding: 18px 32px; margin: 0 auto 32px; font-size: 13px; color: var(--blue); }
+.cert strong { display: block; font-size: 18px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-badge">GS1</div>
+    <span>Academy</span>
+  </div>
+  <div class="hdr-right">
+    <span id="prog-text">Introduktion</span>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <span id="prog-pct">0%</span>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-hd">Kursinnehåll</div>
+    <div id="ch-list"></div>
+    <div class="sidebar-footer">
+      <p>📋 Kurs: Introduktion till GS1<br>⏱ Ca 15 minuter · 4 kapitel + quiz</p>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- SCREEN 0: Welcome -->
+    <div class="screen active" id="s0">
+      <div class="screen-tag">Introduktionskurs · GS1 Academy</div>
+      <h1 class="screen-title">Kom igång med GS1-standarder</h1>
+      <p class="screen-intro">En praktisk introduktion till GS1-systemet — vad det är, varför det finns, och hur du registrerar och märker dina produkter.</p>
+      <div class="dur-tag">⏱ Uppskattad tid: 15 minuter</div>
+
+      <div class="card">
+        <h3>🎯 Det här lär du dig</h3>
+        <div class="obj-grid">
+          <div class="obj"><div class="obj-n">1</div><span>Vad GS1-systemet är och varför det behövs globalt</span></div>
+          <div class="obj"><div class="obj-n">2</div><span>Hur ett GTIN (globalt artikelnummer) är uppbyggt</span></div>
+          <div class="obj"><div class="obj-n">3</div><span>Skillnaden mellan olika typer av streckkoder</span></div>
+          <div class="obj"><div class="obj-n">4</div><span>Steg-för-steg: registrera och märk dina produkter</span></div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Visste du?</strong> Varje dag skannas över 10 miljarder GS1-streckkoder världen över — i butikskassor, sjukhus, lager och logistikkedjor. GS1-systemet är det gemensamma språk som gör det möjligt för alla dessa aktörer att kommunicera utan missförstånd.
+      </div>
+
+      <div class="nav"><span></span><button class="btn btn-pri" onclick="go(1)">Starta kursen →</button></div>
+    </div>
+
+    <!-- SCREEN 1: What is GS1 -->
+    <div class="screen" id="s1">
+      <div class="screen-tag">Kapitel 1 av 4 · Grunderna</div>
+      <h1 class="screen-title">Vad är GS1?</h1>
+      <p class="screen-intro">GS1 är en global, icke-vinstdrivande organisation som utvecklar och underhåller standarder för identifiering och kommunikation i affärslivet.</p>
+
+      <div class="card">
+        <h3>🌍 Ett gemensamt språk för handel</h3>
+        <p>Föreställ dig att varje land hade sitt eget alfabet — kommunikation över gränser skulle vara kaos. Detsamma gäller för handel utan standarder. GS1 löser det problemet genom universella identitetsnummer och dataformat som fungerar lika väl i en svensk dagligvarubutik som i ett japanskt sjukhus eller ett tyskt logistiklager.</p>
+        <p>GS1 Sweden grundades 1972 och är den svenska noden i det globala GS1-nätverket med närvaro i över 115 länder och mer än 2 miljoner anslutna företag världen över.</p>
+      </div>
+
+      <div class="cg">
+        <div class="cc"><div class="cc-icon">🔢</div><h4>Identifiera</h4><p>Unika globala nummer för produkter, platser, tillgångar och parter</p></div>
+        <div class="cc"><div class="cc-icon">📦</div><h4>Märka</h4><p>Streckkoder och RFID-taggar som bär informationen maskinläsbart</p></div>
+        <div class="cc"><div class="cc-icon">🔄</div><h4>Dela</h4><p>Gemensamma dataformat för utbyte av produktinformation i hela kedjan</p></div>
+      </div>
+
+      <div class="info-box">
+        <strong>Nyckelpunkt:</strong> GS1-standarderna är helt branschneutrala. Samma system som används för en chokladkaka i en matbutik används för ett läkemedel på ett apotek, för ett byggmaterial i ett lager och för ett kirurgiskt instrument på ett sjukhus.
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-sec" onclick="go(0)">← Föregående</button>
+        <button class="btn btn-pri" onclick="go(2)">Nästa kapitel →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: GTIN -->
+    <div class="screen" id="s2">
+      <div class="screen-tag">Kapitel 2 av 4 · Artikelnummer</div>
+      <h1 class="screen-title">GTIN – Globalt artikelnummer</h1>
+      <p class="screen-intro">GTIN (Global Trade Item Number) är det viktigaste begreppet att förstå. Det är ett unikt nummer som identifierar din produkt i hela världen — i varje butik, lager och system.</p>
+
+      <div class="bc-demo">
+        <svg width="148" height="108" viewBox="0 0 148 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="148" height="108" rx="6" fill="white"/>
+          <g fill="#1D2939">
+            <rect x="8" y="8" width="3" height="74"/><rect x="13" y="8" width="1" height="74"/><rect x="16" y="8" width="2" height="74"/>
+            <rect x="20" y="8" width="3" height="74"/><rect x="25" y="8" width="1" height="74"/><rect x="28" y="8" width="2" height="74"/>
+            <rect x="32" y="8" width="3" height="74"/><rect x="37" y="8" width="1" height="74"/><rect x="40" y="8" width="2" height="74"/>
+            <rect x="44" y="8" width="1" height="74"/><rect x="47" y="8" width="3" height="74"/><rect x="52" y="8" width="2" height="74"/>
+            <rect x="56" y="8" width="1" height="74"/><rect x="59" y="8" width="3" height="74"/><rect x="64" y="8" width="1" height="74"/>
+            <rect x="67" y="8" width="2" height="74"/><rect x="71" y="8" width="3" height="74"/><rect x="76" y="8" width="1" height="74"/>
+            <rect x="79" y="8" width="2" height="74"/><rect x="83" y="8" width="3" height="74"/><rect x="88" y="8" width="1" height="74"/>
+            <rect x="91" y="8" width="2" height="74"/><rect x="95" y="8" width="3" height="74"/><rect x="100" y="8" width="1" height="74"/>
+            <rect x="103" y="8" width="2" height="74"/><rect x="107" y="8" width="1" height="74"/><rect x="110" y="8" width="3" height="74"/>
+            <rect x="115" y="8" width="2" height="74"/><rect x="119" y="8" width="1" height="74"/><rect x="122" y="8" width="3" height="74"/>
+            <rect x="127" y="8" width="1" height="74"/><rect x="130" y="8" width="2" height="74"/><rect x="134" y="8" width="3" height="74"/>
+            <rect x="139" y="8" width="1" height="74"/>
+          </g>
+          <text x="74" y="100" font-family="monospace" font-size="9" fill="#1D2939" text-anchor="middle">7 312345 678903</text>
+        </svg>
+        <div class="bc-info">
+          <h4>EAN-13 — Den vanligaste streckkoden</h4>
+          <p>Den streckkod du ser på nästan alla konsumentprodukter. Den innehåller ett 13-siffrigt GTIN som globalt och unikt identifierar produkten.</p>
+          <div class="chips">
+            <span class="chip chip-b">73 = Sverige</span>
+            <span class="chip chip-b">12345 = Ditt företag</span>
+            <span class="chip chip-b">67890 = Din artikel</span>
+            <span class="chip chip-b">3 = Kontrollsiffra</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔢 Hur ett GTIN är uppbyggt</h3>
+        <p><strong>GS1-prefix:</strong> Identifierar det land och den GS1-organisation som tilldelat numret. Sverige börjar typiskt med 73.</p>
+        <p><strong>Företagsprefix:</strong> Ditt unika företagsnummer som du tilldelats av GS1 Sweden vid registrering. Längden varierar beroende på abonnemang.</p>
+        <p><strong>Artikelreferens:</strong> Det nummer du själv sätter för varje enskild produkt i ditt sortiment. Varje unik variant — storlek, färg, smak — får ett eget nummer.</p>
+        <p><strong>Kontrollsiffra:</strong> Den sista siffran beräknas automatiskt och verifierar att skanningen gick rätt till. Stämmer inte siffran avvisas skanningen.</p>
+      </div>
+
+      <div class="info-box">
+        <strong>Viktigt att veta:</strong> Varje unik produktvariant behöver sitt eget GTIN. En 500 g förpackning och en 1 kg förpackning av samma produkt är <em>inte</em> samma produkt i GS1-systemet — de har olika GTIN.
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-sec" onclick="go(1)">← Föregående</button>
+        <button class="btn btn-pri" onclick="go(3)">Nästa kapitel →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Register -->
+    <div class="screen" id="s3">
+      <div class="screen-tag">Kapitel 3 av 4 · Kom igång</div>
+      <h1 class="screen-title">Registrera och märk dina produkter</h1>
+      <p class="screen-intro">Från registrering till färdigmärkt produkt — så här ser processen ut steg för steg.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-c">
+            <h4>Registrera ditt företag hos GS1 Sweden</h4>
+            <p>Skapa ett konto på gs1.se och välj ett abonnemang baserat på hur många produkter du behöver märka. Du tilldelas omedelbart ett unikt GS1-företagsprefix.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-c">
+            <h4>Skapa GTIN för varje produktvariant</h4>
+            <p>Använd GS1 Swedens verktyg för att generera unika artikelnummer. Varje unik kombination av produkt, storlek och variant behöver ett eget GTIN.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-c">
+            <h4>Generera och validera streckkoden</h4>
+            <p>Omvandla ditt GTIN till en streckkod med hjälp av godkända verktyg. Kontrollera att streckkoden uppfyller GS1:s specifikationer för storlek, kontrast och lugn zon.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-c">
+            <h4>Registrera produktdata i Validoo (rekommenderas)</h4>
+            <p>Ladda upp produktinformation i det gemensamma produktdataregistret. Dina handelspartners och detaljister kan då hämta korrekt data direkt istället för att mata in det manuellt.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">5</div>
+          <div class="step-c">
+            <h4>Applicera streckkoden på förpackningen</h4>
+            <p>Märk din produkt och testa skanningskvaliteten med ett verifieringsinstrument. Godkänd kvalitet säkerställer att streckkoden skannas korrekt i hela handelsledet.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>GS1 Swedens support:</strong> Du behöver aldrig stå ensam. Vår kundservice, onlineguider och webinarier hjälper dig genom varje steg — oavsett om du är ett enmansföretag eller ett multinationellt bolag.
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-sec" onclick="go(2)">← Föregående</button>
+        <button class="btn btn-pri" onclick="go(4)">Kunskapskoll →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: Quiz -->
+    <div class="screen" id="s4">
+      <div class="screen-tag">Kunskapskoll · 4 frågor</div>
+      <h1 class="screen-title">Testa dina kunskaper</h1>
+      <p class="screen-intro">Svara på frågorna för att bekräfta att du tagit till dig kursens nyckelbegrepp. Du kan inte ändra ett svar när du väl klickat.</p>
+
+      <div class="quiz-q" id="qq1">
+        <div class="q-num">Fråga 1 av 4</div>
+        <div class="q-text">Vad står förkortningen GTIN för?</div>
+        <div class="opts">
+          <div class="opt" onclick="ans(this,'qq1',false)"><div class="opt-radio"></div>Global Trade Identification Node</div>
+          <div class="opt" onclick="ans(this,'qq1',true)"><div class="opt-radio"></div>Global Trade Item Number</div>
+          <div class="opt" onclick="ans(this,'qq1',false)"><div class="opt-radio"></div>General Trade Index Number</div>
+          <div class="opt" onclick="ans(this,'qq1',false)"><div class="opt-radio"></div>GS1 Track &amp; Identify Number</div>
+        </div>
+        <div class="q-fb ok" id="qq1-ok" style="display:none">✓ Rätt! GTIN – Global Trade Item Number – är det globala artikelnumret som unikt identifierar en produkt i hela världen.</div>
+        <div class="q-fb nope" id="qq1-no" style="display:none">✗ Inte riktigt. GTIN står för Global Trade Item Number – det globala artikelnumret för produktidentifikation.</div>
+      </div>
+
+      <div class="quiz-q" id="qq2">
+        <div class="q-num">Fråga 2 av 4</div>
+        <div class="q-text">Vilket påstående om GS1-standarderna stämmer?</div>
+        <div class="opts">
+          <div class="opt" onclick="ans(this,'qq2',false)"><div class="opt-radio"></div>De gäller enbart för dagligvarubranschen</div>
+          <div class="opt" onclick="ans(this,'qq2',false)"><div class="opt-radio"></div>Varje land har sina egna unika standarder</div>
+          <div class="opt" onclick="ans(this,'qq2',true)"><div class="opt-radio"></div>De är branschneutrala och gäller globalt</div>
+          <div class="opt" onclick="ans(this,'qq2',false)"><div class="opt-radio"></div>De är obligatoriska bara för exporterande företag</div>
+        </div>
+        <div class="q-fb ok" id="qq2-ok" style="display:none">✓ Rätt! GS1-standarderna är branschneutrala och används globalt inom dagligvaror, sjukvård, bygg, apotek, logistik och många fler branscher.</div>
+        <div class="q-fb nope" id="qq2-no" style="display:none">✗ Inte riktigt. GS1-standarderna är faktiskt branschneutrala och används globalt inom en mängd olika branscher.</div>
+      </div>
+
+      <div class="quiz-q" id="qq3">
+        <div class="q-num">Fråga 3 av 4</div>
+        <div class="q-text">Du säljer en produkt i både 500 g och 1 kg förpackning. Hur många GTIN behöver du?</div>
+        <div class="opts">
+          <div class="opt" onclick="ans(this,'qq3',false)"><div class="opt-radio"></div>Ett GTIN — det är samma produkt</div>
+          <div class="opt" onclick="ans(this,'qq3',true)"><div class="opt-radio"></div>Två GTIN — ett per unik variant</div>
+          <div class="opt" onclick="ans(this,'qq3',false)"><div class="opt-radio"></div>GS1 bestämmer automatiskt hur många</div>
+          <div class="opt" onclick="ans(this,'qq3',false)"><div class="opt-radio"></div>Det beror på vilken bransch du är i</div>
+        </div>
+        <div class="q-fb ok" id="qq3-ok" style="display:none">✓ Rätt! Varje unik produktvariant — inklusive förpackningsstorlek — ska ha ett eget GTIN. Det säkerställer att handelsledet alltid vet exakt vilken produkt det rör sig om.</div>
+        <div class="q-fb nope" id="qq3-no" style="display:none">✗ Inte riktigt. Eftersom storleken är en del av produktens identitet behöver varje variant ett eget GTIN.</div>
+      </div>
+
+      <div class="quiz-q" id="qq4">
+        <div class="q-num">Fråga 4 av 4</div>
+        <div class="q-text">Vad är syftet med kontrollsiffran i ett GTIN?</div>
+        <div class="opts">
+          <div class="opt" onclick="ans(this,'qq4',false)"><div class="opt-radio"></div>Den identifierar vilket land produkten kommer från</div>
+          <div class="opt" onclick="ans(this,'qq4',false)"><div class="opt-radio"></div>Den anger produktens pris</div>
+          <div class="opt" onclick="ans(this,'qq4',false)"><div class="opt-radio"></div>Den visar hur många produkter du har i lager</div>
+          <div class="opt" onclick="ans(this,'qq4',true)"><div class="opt-radio"></div>Den verifierar att streckkoden skannas korrekt</div>
+        </div>
+        <div class="q-fb ok" id="qq4-ok" style="display:none">✓ Rätt! Kontrollsiffran beräknas matematiskt från övriga siffror och används för att verifiera att streckkoden lästs av utan fel.</div>
+        <div class="q-fb nope" id="qq4-no" style="display:none">✗ Inte riktigt. Kontrollsiffran är en matematiskt beräknad siffra som verifierar att skanningen gick rätt till.</div>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-sec" onclick="go(3)">← Föregående</button>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span id="quiz-hint" style="font-size:13px;color:var(--g600)">Svara på alla frågor för att slutföra</span>
+          <button class="btn btn-pri" id="finish-btn" onclick="finish()" style="display:none">Slutför kursen →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: Completion -->
+    <div class="screen" id="s5">
+      <div class="done-wrap">
+        <div class="done-badge">🎓</div>
+        <div class="screen-tag" style="text-align:center">Kurs slutförd</div>
+        <h1 class="screen-title" style="text-align:center">Grattis, du är klar!</h1>
+        <p class="screen-intro" style="text-align:center;max-width:520px;margin:0 auto 28px">Du har slutfört introduktionskursen i GS1-standarder och är nu redo att ta nästa steg — oavsett om det är att registrera dig, fördjupa dig i din bransch eller börja märka dina produkter.</p>
+
+        <div class="done-score">
+          <div class="num" id="final-score">4/4</div>
+          <div class="lbl">rätta svar på kunskapskollet</div>
+        </div>
+
+        <div class="cert">
+          <strong>Introduktion till GS1-standarder</strong>
+          Avklarad · GS1 Academy
+        </div>
+
+        <div class="card" style="max-width:520px;margin:0 auto 32px;text-align:left">
+          <h3>📋 Dina nästa steg</h3>
+          <div class="steps" style="margin-top:14px">
+            <div class="step">
+              <div class="step-n" style="background:var(--green);font-size:16px">✓</div>
+              <div class="step-c"><h4>Introduktion till GS1</h4><p>Avklarad ✓</p></div>
+            </div>
+            <div class="step">
+              <div class="step-n">2</div>
+              <div class="step-c"><h4>Fördjupning: Din bransch</h4><p>Välj en branschkurs i GS1 Academy som passar ditt företag</p></div>
+            </div>
+            <div class="step">
+              <div class="step-n">3</div>
+              <div class="step-c"><h4>Registrera och kom igång</h4><p>Skapa ditt GS1-konto på gs1.se och beställ ditt företagsprefix</p></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-pri" onclick="restart()">↺ Gå igenom kursen igen</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const CHS = [
+  { t: 'Välkommen', s: 'Introduktion & mål' },
+  { t: 'Vad är GS1?', s: 'Grunderna' },
+  { t: 'GTIN', s: 'Globalt artikelnummer' },
+  { t: 'Kom igång', s: 'Registrering & märkning' },
+  { t: 'Kunskapskoll', s: '4 frågor' },
+];
+
+let cur = 0, answers = {}, score = 0;
+
+// Build sidebar
+const chList = document.getElementById('ch-list');
+CHS.forEach((c, i) => {
+  const el = document.createElement('div');
+  el.className = 'ch' + (i === 0 ? ' active' : '');
+  el.id = 'ch' + i;
+  el.innerHTML = `<div class="ch-ic">${i+1}</div><div class="ch-text"><div class="ch-title">${c.t}</div><div class="ch-sub">${c.s}</div></div>`;
+  el.onclick = () => go(i);
+  chList.appendChild(el);
+});
+
+function go(idx) {
+  document.getElementById('s' + cur)?.classList.remove('active');
+  document.getElementById('ch' + Math.min(cur, CHS.length - 1))?.classList.remove('active');
+  cur = idx;
+  document.getElementById('s' + idx)?.classList.add('active');
+  const ci = Math.min(idx, CHS.length - 1);
+  document.querySelectorAll('.ch').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < ci) el.classList.add('done');
+  });
+  document.getElementById('ch' + ci)?.classList.add('active');
+  const pct = Math.round((idx / 5) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-text').textContent = idx === 0 ? 'Introduktion' : idx === 5 ? 'Slutförd! 🎉' : `Kapitel ${idx} av 4`;
+  window.scrollTo(0, 0);
+}
+
+function ans(el, qid, correct) {
+  if (answers[qid] !== undefined) return;
+  answers[qid] = correct;
+  el.parentElement.querySelectorAll('.opt').forEach(o => o.classList.add('locked'));
+  if (correct) {
+    el.classList.add('ok');
+    document.getElementById(qid + '-ok').style.display = 'block';
+    score++;
+  } else {
+    el.classList.add('nope');
+    document.getElementById(qid + '-no').style.display = 'block';
+    el.parentElement.querySelectorAll('.opt').forEach(o => {
+      if (o.getAttribute('onclick') && o.getAttribute('onclick').includes('true')) o.classList.add('ok');
+    });
+  }
+  if (Object.keys(answers).length === 4) {
+    document.getElementById('finish-btn').style.display = 'inline-block';
+    document.getElementById('quiz-hint').style.display = 'none';
+  }
+}
+
+function finish() {
+  document.getElementById('final-score').textContent = score + '/4';
+  go(5);
+}
+
+function restart() {
+  answers = {}; score = 0;
+  document.querySelectorAll('.opt').forEach(o => { o.className = 'opt'; });
+  document.querySelectorAll('.q-fb').forEach(f => f.style.display = 'none');
+  document.getElementById('finish-btn').style.display = 'none';
+  document.getElementById('quiz-hint').style.display = 'inline';
+  go(0);
+}
+</script>
+</body>
+</html>
