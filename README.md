@@ -12,7 +12,3 @@ Prototypdemos byggda inför ansökan till tjänsten Training Manager på GS1 Swe
 Filerna är avsiktligt self-contained HTML — allt i en fil per demo, utan externa dependencies eller build-steg. Det gör dem enkla att dela och öppna direkt i en webbläsare.
 
 Det här är prototyper. CSS:en använder inte custom properties genomgående, och det finns ingen separation av HTML/CSS/JS. I en produktionsmiljö hade strukturen sett annorlunda ut — men det är inte vad de här filerna är till för. De demonstrerar pedagogisk struktur, UX-flöde och instruktionsdesign, inte enterprise-arkitektur.
-
-## Kontakt
-
-olov.tsigrimanis@hotmail.com · +46 736 21 22 66
